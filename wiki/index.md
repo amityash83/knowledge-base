@@ -2,7 +2,7 @@
 title: Wiki Index
 type: review
 domain: [devops, ai-ml, personal]
-status: stub
+status: evolving
 tags: [index, wiki, navigation]
 sources: []
 created: 2026-08-11
@@ -16,16 +16,29 @@ Catalog of every page in the wiki, grouped by entity type. Updated by `/ingest` 
 See [[llm-wiki-design-plan]] for the schema this index follows.
 
 ## Concepts
-_None yet — populated during Phase 2 migration and future `/ingest` runs._
+- [[artificial-intelligence]] — what AI is, its types, and core components
+- [[machine-learning-vs-deep-learning]] — ML vs DL, when to use which
+- [[retrieval-augmented-generation]] — RAG pipeline, why it exists, this vault's own RAG use case
+- [[embeddings-and-vector-databases]] — embeddings and vector DB fundamentals
+- [[ai-agents]] — agent architecture, types, components
+- [[aiops]] — AI for IT operations
+- [[mcp-architecture]] — Model Control Plane design
+- [[kubernetes-cluster-fundamentals]] — control plane, worker nodes, request flow
+- [[kubernetes-service-networking]] — Services, Ingress, traffic paths
+- [[terraform-workflow]] — the plan/apply lifecycle and why it's structured that way
 
 ## Tools
-_None yet._
+- [[kubectl]] — command reference
+- [[terraform]] — CLI command reference
 
 ## Projects
-_None yet._
+- [[devops-lab-platform-foundation]] — active
+- [[devops-mcp-control-plane]] — active
+- [[ai-rag-system-blueprint]] — active
 
 ## Runbooks
-_None yet._
+- [[postgresql-rds-db-setup-for-applications]]
+- [[aws-alb-opensearch-log-pipeline]]
 
 ## People
 _None yet._
@@ -34,7 +47,7 @@ _None yet._
 _None yet._
 
 ## Reviews
-_None yet._
+- [[ai-learning-free-courses]] — curated free AI course list
 
 ## Related
 - [[dashboard]]

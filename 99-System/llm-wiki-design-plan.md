@@ -121,27 +121,27 @@ Obsidian's job is purely to view and browse what Claude writes — it never need
 - **Dataview plugin (worth adding)** — query pages by frontmatter, e.g. "all `type: decision` tagged `personal` from the last 30 days" — without Claude having to hand-maintain more index pages.
 - **Web Clipper (optional)** — clip an article straight into `raw-sources/inbox/` from the browser, the fastest way to keep the inbox fed between Claude Code sessions.
 
-## Migration plan
+## Migration plan — status: complete (2026-08-11)
 
-Most existing numbered-folder notes are thin (~45-50 line) templated scaffolding from an earlier bootstrap pass — there isn't much content debt. Two runbooks and the six `AI-*` notes carry the real content and migrate as-is.
+Most existing numbered-folder notes were thin (~45-50 line) templated scaffolding from an earlier bootstrap pass — there wasn't much content debt. Execution deviated from the original plan below in one deliberate way: rather than hand-migrating old notes into `wiki/` folder-by-folder, **every real-content file was moved into `raw-sources/archive/` unchanged and then run through one real `/ingest` pass** — treating the old vault as source material to ingest, not as pages to reshuffle. This produced a properly deduplicated, split, cross-linked wiki instead of a 1:1 file-for-file copy. Full detail of what was merged/split/dropped is in the "2026-08-11 — migration ingest" entry of `wiki/log.md`.
 
-### Phase 1 — Scaffold the schema
-- Create `raw-sources/{inbox,archive}/` and `wiki/{concepts,tools,projects,runbooks,people,decisions,reviews}/`
-- Write `wiki/index.md` and `wiki/log.md` (empty, structure only)
-- Rewrite `CLAUDE.md` to describe this structure as the schema layer, replacing today's folder-convention section
+### Phase 1 — Scaffold the schema ✅
+- Created `raw-sources/{inbox,archive}/` and `wiki/{concepts,tools,projects,runbooks,people,decisions,reviews}/`
+- Wrote `wiki/index.md` and `wiki/log.md`
+- Rewrote `CLAUDE.md` to describe this structure as the schema layer
 
-### Phase 2 — Carry over real content
-- `04-Runbooks/*` → `wiki/runbooks/` unchanged in substance, frontmatter upgraded to the new schema
-- `AI-AIOps/`, `AI-Agents/`, `AI-MCP/`, `AI-Models/`, `AI-RAG/`, `AI-Experiments/`, `01-Foundation/AI/*` → split into `wiki/concepts/` pages (one concept per page, not one page per old folder) tagged `domain: [ai-ml]`
-- `03-Projects/*` → `wiki/projects/`, each gets a `status` field
+### Phase 2 — Move everything real into raw-sources, then ingest ✅
+- All 26 real-content files (2 runbooks, 6 `AI-*` notes, 4 `01-Foundation/AI` notes, 4 `02-Knowledge` notes + its index, 3 `03-Projects` notes + its index, 3 `04-Snippets` notes, 2 `06-Resources` notes, 1 `05-Logs` note, 1 `00-Inbox` note) moved via `git mv` into `raw-sources/archive/`, preserving git history
+- One ingest pass read all of them together and produced: 10 concept pages, 2 tool pages, 3 project pages, 2 runbook pages, 1 review page — deduplicating four overlapping RAG notes into a single [[retrieval-augmented-generation]] page, and splitting the multi-topic `AI-Basics.md` across [[artificial-intelligence]] and [[aiops]]
+- `AI-Experiments.md` and `AI-Models.md` were read but had no durable content beyond what the other concept pages already cover — archived as sources with no dedicated page
 
-### Phase 3 — Retire or archive the thin scaffolding
-- `02-Knowledge/*`, `06-Resources/*` — templated stubs with little unique content; either fold their few real facts into the new concept pages or move the raw files into `raw-sources/archive/` as historical input, not live wiki pages
-- `00-Inbox/inbox-capture-staging.md` → becomes `raw-sources/inbox/` itself; the note explaining the inbox becomes redundant once the folder name says it
-- `99-System/*` — keep as historical record of the original design brief, referenced from the new `CLAUDE.md` rather than acted on
+### Phase 3 — Remove the old folders ✅
+- `platform-reference-map.md` and the old `02-Knowledge/index.md` / `03-Projects/index.md` were archived as sources, not turned into pages — their job is superseded by `wiki/index.md`
+- All now-empty old folders (`00-Inbox/`, `01-Foundation/`, `02-Knowledge/`, `03-Projects/`, `04-Runbooks/`, `04-Snippets/`, `05-Logs/`, `06-Resources/`, `AI-AIOps/`, `AI-Agents/`, `AI-Experiments/`, `AI-MCP/`, `AI-Models/`, `AI-RAG/`) were deleted
+- `99-System/*` kept in place as historical design record, untouched
 
-### Phase 4 — First real ingest
-- Drop one new real source into `raw-sources/inbox/` and run `/ingest` to prove the schema before trusting it with a backlog
+### Phase 4 — First real ingest against new material — not started
+- Still pending: drop one genuinely new source into `raw-sources/inbox/` and run `/ingest` to prove the operation end-to-end against material that wasn't part of the bulk migration
 - Check the result: does it link into the migrated pages correctly, does `log.md` read clearly, does Obsidian's graph view look sane
 
 ## Automation path

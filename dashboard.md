@@ -1,23 +1,21 @@
 ---
 title: Knowledge Dashboard
-tags: [dashboard, knowledge-base, obsidian]
+tags: [dashboard, knowledge-base, obsidian, wiki]
 domain: knowledge-management
 difficulty: intermediate
 created: 2026-04-09
-updated: 2026-04-09
+updated: 2026-08-11
 ---
 
 # Knowledge Dashboard
 
 ## Summary
-This dashboard is the entry point for the Obsidian vault. It highlights active projects, core learning areas, recent operational notes, and quick links that support a DevOps and AI knowledge workflow.
-
-> **Migration in progress:** the vault is moving to a [[wiki/index|Wiki Index]]-based structure (see [[llm-wiki-design-plan]]). Links below still point at the old folders until their content is carried over.
+This dashboard is the entry point for the Obsidian vault. It highlights active projects, core concepts, and recent operations, and points into the [[wiki/index|Wiki Index]] — the actual catalog of every page — for full navigation.
 
 ## Concepts
-- A dashboard reduces navigation friction by linking high-value notes first.
-- Stable top-level links make the vault easier for humans, RAG chunking, and MCP-driven agents to parse.
-- Explicit note names improve search relevance and downstream embedding quality.
+- A dashboard reduces navigation friction by linking high-value pages first.
+- Stable top-level links make the vault easier for humans and Claude Code to parse.
+- The full page catalog lives in [[wiki/index|Wiki Index]], grouped by entity type; this page is just the fast path to what matters most right now.
 
 ## Commands / Code
 ```bash
@@ -26,45 +24,45 @@ cd /Users/amitmishra/temp/ObsidianVault
 ```
 
 ## Architecture / Flow
-1. Capture unstructured ideas in [[inbox-capture-staging]].
-2. Promote durable work into [[02-Knowledge/index|Knowledge Index]] and project notes under `01-Projects/`.
-3. Convert repeated commands into snippet notes under `03-Snippets/`.
-4. Maintain operational history in [[ops-vault-bootstrap-log]].
+1. Drop new material into `raw-sources/inbox/`.
+2. Run `/ingest` to read it and update `wiki/` pages (see [CLAUDE.md](CLAUDE.md) for the operation definitions).
+3. Ask questions with `/ask`, which searches `wiki/` and cites the pages it used.
+4. Run `/lint` periodically to catch contradictions, stale pages, and orphaned links.
+5. Every operation is recorded in [[wiki/log|Wiki Log]].
 
 ## Use Cases
 - Start daily work from a single navigation page.
-- Surface the most important project and knowledge links for fast retrieval.
-- Provide a clean anchor note for RAG indexing and agent orchestration.
+- Surface the most important project and concept links for fast retrieval.
+- Provide a clean anchor note for Claude Code's `/ask` and `/ingest` operations.
 
 ## Related Topics
 - [[wiki/index|Wiki Index]]
-- [[02-Knowledge/index|Knowledge Index]]
+- [[wiki/log|Wiki Log]]
+- [[llm-wiki-design-plan]]
 - [[devops-mcp-control-plane]]
 - [[ai-rag-system-blueprint]]
 - [[devops-lab-platform-foundation]]
-- [[platform-reference-map]]
 
 ## Tags
-#dashboard #obsidian #knowledge-base #rag #mcp
+#dashboard #obsidian #knowledge-base #wiki
 
 ## Active Projects
 - [[devops-mcp-control-plane]]
 - [[devops-lab-platform-foundation]]
 - [[ai-rag-system-blueprint]]
 
-## Learning Areas
+## Core Concepts
+- [[artificial-intelligence]]
+- [[retrieval-augmented-generation]]
 - [[kubernetes-cluster-fundamentals]]
-- [[terraform-infrastructure-workflows]]
-- [[llm-rag-basic-concepts]]
-- [[networking-service-routing-basics]]
+- [[terraform-workflow]]
+- [[mcp-architecture]]
 
-## Recent Notes
-- [[ops-vault-bootstrap-log]]
-- [[platform-reference-map]]
-- [[ai-obsidian-bootstrap-prompt]]
+## Runbooks
+- [[postgresql-rds-db-setup-for-applications]]
+- [[aws-alb-opensearch-log-pipeline]]
 
 ## Quick Access
-- [[kubernetes-kubectl-common-commands]]
-- [[terraform-terraform-cli-workflow]]
-- [[ai-rag-pipeline-template]]
-- [[platform-reference-map]]
+- [[kubectl]]
+- [[terraform]]
+- [[ai-learning-free-courses]]

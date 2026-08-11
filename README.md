@@ -1,162 +1,63 @@
 ---
 title: Obsidian Vault README
-tags: [readme, knowledge-base, obsidian, rag, mcp]
+tags: [readme, knowledge-base, obsidian, wiki]
 domain: knowledge-management
 difficulty: beginner
 created: 2026-04-10
-updated: 2026-04-10
+updated: 2026-08-11
 ---
 
 # Obsidian Vault README
 
 ## Purpose
-This vault is a personal DevOps and AI knowledge system built for structured note-taking, long-term reuse, and future automation. It is designed to support three outcomes:
+This vault is a personal LLM-maintained wiki, following Andrej Karpathy's ["LLM Wiki" pattern](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f): instead of a RAG system that re-retrieves from raw documents on every query, Claude Code maintains a persistent, evolving wiki of cross-linked Markdown pages that accumulate and improve every time a new source is ingested. Obsidian is used purely as the viewer — graph view, wikilinks, and (optionally) Dataview over the same files Claude writes.
 
-- Human-readable technical documentation
-- RAG-ready knowledge retrieval
-- MCP-style agent workflows for reasoning and execution
+Full schema and conventions live in [CLAUDE.md](CLAUDE.md); the design rationale and migration history live in [99-System/llm-wiki-design-plan.md](99-System/llm-wiki-design-plan.md).
 
-## Primary Use Cases
-- Capture architecture discussions, debugging sessions, and implementation decisions.
-- Store project context and proof-of-concept learnings in a reusable format.
-- Keep operational commands and templates in one searchable place.
-- Prepare notes for future AI querying and agent-driven task execution.
+## Three Layers
 
-## Folder Structure
+### `raw-sources/`
+Immutable inputs — articles, transcripts, PDFs, pasted notes. Claude reads these but never edits them.
+- `raw-sources/inbox/` — drop zone for anything not yet ingested
+- `raw-sources/archive/` — sources already ingested, kept for citation/provenance
 
-### `00-Inbox/`
-Use for raw capture before classification.
+### `wiki/`
+Claude-owned, cross-linked Markdown pages, one entity per page:
+- `wiki/concepts/` — durable ideas (Kubernetes, RAG, MCP, ...)
+- `wiki/tools/` — named systems (Terraform, kubectl, ...)
+- `wiki/projects/` — ongoing work with a status field
+- `wiki/runbooks/` — repeatable operational procedures
+- `wiki/people/` — collaborators, authors, mentors
+- `wiki/decisions/` — dated choices worth remembering the reasoning behind
+- `wiki/reviews/` — synthesized answers to past queries, promoted because they're reusable
+- `wiki/index.md` — catalog of every page, by entity type
+- `wiki/log.md` — append-only record of every ingest/ask/lint run
 
-Typical content:
-- rough notes
-- chat summaries
-- unprocessed ideas
-- temporary discussion dumps
-
-### `01-Projects/`
-Use for active project notes and project-level context.
-
-Typical content:
-- project overview notes
-- implementation plans
-- POC summaries
-- project indexes
-
-### `02-Knowledge/`
-Use for durable domain knowledge that should remain stable beyond a single project.
-
-Typical content:
-- Kubernetes concepts
-- Terraform workflows
-- LLM and RAG notes
-- networking references
-
-### `03-Snippets/`
-Use for reusable commands, templates, and short execution patterns.
-
-Typical content:
-- `kubectl` command sets
-- Terraform CLI workflows
-- RAG pipeline templates
-
-### `04-Logs/`
-Use for historical records and operational timelines.
-
-Typical content:
-- vault update logs
-- experiment logs
-- migration records
-- implementation milestones
-
-### `05-Resources/`
-Use for canonical references and curated maps of important notes.
-
-Typical content:
-- reference maps
-- curated entry points
-- stable navigation notes
-
-### `99-System/`
-Use for system prompts, vault rules, and design constraints that define how the knowledge base should evolve.
-
-Typical content:
-- bootstrap prompts
-- structure rules
-- operating instructions
+### `CLAUDE.md`
+The schema layer — folder structure, page frontmatter, and the ingest/ask/lint operation definitions.
 
 ## How To Use This Vault
-1. Start from [dashboard.md](/Users/amitmishra/temp/ObsidianVault/dashboard.md).
-2. Capture incomplete information in [00-Inbox/inbox-capture-staging.md](/Users/amitmishra/temp/ObsidianVault/00-Inbox/inbox-capture-staging.md).
-3. Move durable technical knowledge into [02-Knowledge/index.md](/Users/amitmishra/temp/ObsidianVault/02-Knowledge/index.md).
-4. Keep project-specific work under [01-Projects/index.md](/Users/amitmishra/temp/ObsidianVault/01-Projects/index.md).
-5. Extract repeatable commands into `03-Snippets/`.
-6. Record important changes in `04-Logs/`.
+1. Start from [dashboard.md](dashboard.md) or [wiki/index.md](wiki/index.md).
+2. Drop new material into `raw-sources/inbox/`.
+3. Ask Claude Code to `/ingest` it — it reads the source, updates or creates the relevant `wiki/` pages, logs the operation, and archives the source.
+4. Ask questions directly — Claude Code searches `wiki/` and answers with citations.
+5. Run a `/lint` pass periodically to catch contradictions, stale pages, and orphaned links.
 
 ## Note Design Standard
-Each note should be:
-
-- self-contained
-- explicit and technical
-- easy to scan
-- linked to related notes
-- tagged for retrieval
-
-Recommended note sections:
+Every wiki page uses one frontmatter shape (`type`, `domain`, `status`, `tags`, `sources`, `created`/`updated`) and the same section order:
 - `Summary`
-- `Concepts`
-- `Commands / Code`
-- `Architecture / Flow`
-- `Use Cases`
-- `Related Topics`
-- `Tags`
+- `Details`
+- `Open questions`
+- `Related`
+
+See [CLAUDE.md](CLAUDE.md) for the full schema and entity-type table.
 
 ## Naming Convention
-Use descriptive kebab-case file names with domain context when possible.
-
-Examples:
-- `kubernetes-cluster-fundamentals.md`
-- `terraform-infrastructure-workflows.md`
-- `ai-rag-system-blueprint.md`
-
-## Tagging Guidance
-Prefer structured and searchable tags.
-
-Examples:
-- `#infra/kubernetes`
-- `#tool/terraform`
-- `#project/mcp`
-- `#learning`
-- `#rag`
-
-## RAG Readiness Guidelines
-To keep notes retrieval-friendly:
-
-- use clear headings
-- keep paragraphs short
-- avoid vague references
-- include concrete technical terms
-- preserve metadata in frontmatter
-- add related links for context expansion
-
-## MCP Readiness Guidelines
-When a note includes repeatable operational work, identify:
-
-- what can be automated
-- what can become a runbook
-- what tools or APIs are needed
-- what inputs and outputs an agent would need
-
-Useful MCP breakdown:
-- Knowledge Layer: Obsidian notes and indexed markdown
-- Reasoning Layer: LLM plus retrieval
-- Execution Layer: CLI tools, scripts, APIs, and validations
-
-## Recommended Workflow
-Chat or rough notes -> `00-Inbox/` -> structured project or knowledge note -> snippet extraction -> linked references -> automation candidate
+Descriptive kebab-case file names with domain context, e.g. `kubernetes-cluster-fundamentals.md`, `aws-alb-opensearch-log-pipeline.md`.
 
 ## Key Entry Points
-- [dashboard.md](/Users/amitmishra/temp/ObsidianVault/dashboard.md)
-- [01-Projects/index.md](/Users/amitmishra/temp/ObsidianVault/01-Projects/index.md)
-- [02-Knowledge/index.md](/Users/amitmishra/temp/ObsidianVault/02-Knowledge/index.md)
-- [05-Resources/platform-reference-map.md](/Users/amitmishra/temp/ObsidianVault/05-Resources/platform-reference-map.md)
-- [99-System/ai-obsidian-bootstrap-prompt.md](/Users/amitmishra/temp/ObsidianVault/99-System/ai-obsidian-bootstrap-prompt.md)
+- [dashboard.md](dashboard.md)
+- [wiki/index.md](wiki/index.md)
+- [wiki/log.md](wiki/log.md)
+- [CLAUDE.md](CLAUDE.md)
+- [99-System/llm-wiki-design-plan.md](99-System/llm-wiki-design-plan.md)

@@ -81,11 +81,11 @@ Three verbs, invoked on demand — nothing runs unattended yet (see the design p
 
 ## Migration status
 
-The vault is mid-migration from an older `00`–`99` numbered-folder scheme (plus flat `AI-*` topic folders) into the `wiki/` structure above. Until migration finishes:
-- **New content always goes into `wiki/`**, following the schema above — never add to the old numbered/`AI-*` folders.
-- The old folders (`00-Inbox/`, `01-Foundation/`, `02-Knowledge/`, `03-Projects/`, `04-Runbooks/`, `04-Snippets/`, `05-Logs/`, `06-Resources/`, `AI-*/`) still hold real content not yet carried over. Treat them as read-only reference material, not as places to file new notes.
-- `99-System/` is kept permanently as historical design record (the original bootstrap prompts plus the current [llm-wiki-design-plan.md](99-System/llm-wiki-design-plan.md)) — consult it, don't migrate it into `wiki/`.
-- See the design plan's Migration Plan section for the phase-by-phase carry-over of runbooks, `AI-*` concepts, and projects into `wiki/`.
+Migration from the old `00`–`99` numbered-folder scheme (plus flat `AI-*` topic folders) into the `wiki/` structure is **complete**. Those folders no longer exist — everything real they held was moved into `raw-sources/archive/` and ingested into `wiki/` in one pass; see the "2026-08-11 — migration ingest" entry in `wiki/log.md` for exactly what was merged, split, or dropped.
+
+- **All content lives in `wiki/`** now, following the schema above.
+- `raw-sources/archive/` holds the original pre-migration files for provenance/citation — treat them as read-only history, not as pages to edit.
+- `99-System/` is kept permanently as historical design record (the original bootstrap prompts plus [llm-wiki-design-plan.md](99-System/llm-wiki-design-plan.md)) — it documents the vault's own design, not domain content, so it stays outside `wiki/`.
 
 ## Editorial conventions
 
