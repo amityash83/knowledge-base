@@ -12,6 +12,8 @@ updated: 2026-04-09
 ## Summary
 This dashboard is the entry point for the Obsidian vault. It highlights active projects, core learning areas, recent operational notes, and quick links that support a DevOps and AI knowledge workflow.
 
+> **Migration in progress:** the vault is moving to a [[wiki/index|Wiki Index]]-based structure (see [[llm-wiki-design-plan]]). Links below still point at the old folders until their content is carried over.
+
 ## Concepts
 - A dashboard reduces navigation friction by linking high-value notes first.
 - Stable top-level links make the vault easier for humans, RAG chunking, and MCP-driven agents to parse.
@@ -35,6 +37,7 @@ cd /Users/amitmishra/temp/ObsidianVault
 - Provide a clean anchor note for RAG indexing and agent orchestration.
 
 ## Related Topics
+- [[wiki/index|Wiki Index]]
 - [[02-Knowledge/index|Knowledge Index]]
 - [[devops-mcp-control-plane]]
 - [[ai-rag-system-blueprint]]

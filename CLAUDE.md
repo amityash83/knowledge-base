@@ -4,45 +4,52 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this repository is
 
-This is **not a software project** — it's an Obsidian vault (personal Markdown knowledge base) for DevOps and AI notes, version-controlled with git. There is no build, lint, or test tooling. "Working in this repo" means reading, writing, and reorganizing Markdown notes according to the conventions below, not writing or executing code.
+This is **not a software project** — it's an Obsidian vault (personal Markdown knowledge base), version-controlled with git. There is no build, lint, or test tooling. "Working in this repo" means reading, writing, and cross-linking Markdown notes according to the schema below, not writing or executing code.
 
-The vault is designed to serve three purposes simultaneously:
-- Human-readable technical documentation
-- RAG-ready retrieval (chunkable, keyword-explicit notes)
-- MCP-style agent workflows (notes that describe automatable steps)
+The vault implements Andrej Karpathy's ["LLM Wiki" pattern](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f): instead of a RAG system that re-retrieves from raw documents on every query, Claude maintains a **persistent, evolving wiki** of cross-linked pages that accumulate and improve every time a new source is ingested. Design rationale and migration status live in [99-System/llm-wiki-design-plan.md](99-System/llm-wiki-design-plan.md) — read it before making structural changes.
 
-## Vault structure
+## Three layers
 
-Two organizational schemes coexist in this repo — know both when navigating or filing new notes:
+1. **`raw-sources/`** — immutable inputs (articles, transcripts, PDFs, pasted notes). Claude reads these but **never edits them**.
+   - `raw-sources/inbox/` — drop zone for anything not yet ingested
+   - `raw-sources/archive/` — sources already ingested, kept for citation/provenance
+2. **`wiki/`** — Claude-owned, cross-linked Markdown pages, one entity per page. This is the only tree Claude writes to as the product of normal work.
+3. **This file** — the schema layer: structure, frontmatter, and the operations below.
 
-**Numbered folders (current standard, use this for new notes):**
-- `00-Inbox/` — raw, unclassified capture (see `inbox-capture-staging.md`)
-- `01-Foundation/` — foundational subject-matter notes, organized in subfolders by domain (e.g. `01-Foundation/AI/`)
-- `02-Knowledge/` — durable, stable domain knowledge (Kubernetes, Terraform, RAG/LLM concepts, networking). Has an `index.md`.
-- `03-Projects/` — active project notes and project-level context. Has an `index.md`.
-- `04-Runbooks/` — step-by-step operational procedures (e.g. RDS setup, log pipelines)
-- `04-Snippets/` — reusable commands/templates (kubectl, Terraform CLI, RAG pipeline templates)
-- `05-Logs/` — historical/operational timelines (vault bootstrap log, migration records)
-- `06-Resources/` — canonical reference maps and curated link collections
-- `99-System/` — system/bootstrap prompts and vault design-rule notes (read these to understand *why* the vault is shaped this way)
+Domain (`devops`, `ai-ml`, `personal`) is a **frontmatter tag, not a folder** — one shared wiki, not per-domain silos. A page can carry multiple domains (e.g. `domain: [ai-ml, devops]`) so a concept used in both contexts isn't duplicated.
 
-Note: `README.md` describes an older numbering (`01-Projects`, `03-Snippets`, `04-Logs`, `05-Resources`) that doesn't match the folders actually on disk today. Trust the folder names on disk (as listed above), not the README's numbers, when filing new notes.
+## Wiki structure
 
-**Flat `AI-*` folders (older/parallel scheme, still populated):** `AI-AIOps/`, `AI-Agents/`, `AI-Experiments/`, `AI-MCP/`, `AI-Models/`, `AI-RAG/` — one topic file per folder. These predate the numbered-folder standard and use a lighter emoji-heading style (see Note formats below). Don't invent more folders in this scheme; new AI content should go into `01-Foundation/AI/` or `02-Knowledge/` instead.
+Every page lives under `wiki/` in exactly one entity folder:
 
-`dashboard.md` at the vault root is the entry point/navigation hub — it links out to active projects, learning areas, and recent notes via `[[wikilink]]` references. When adding a significant new project or knowledge note, consider linking it from `dashboard.md`.
+| Folder | Entity type | What goes here |
+|---|---|---|
+| `wiki/concepts/` | Concept | A durable idea — "RAG", "Kubernetes Service", "Compound interest" |
+| `wiki/tools/` | Tool | A named system — Terraform, pgvector, Obsidian itself |
+| `wiki/projects/` | Project | Ongoing work with a start state and a goal; has a `status` field |
+| `wiki/runbooks/` | Runbook | A repeatable operational procedure with prerequisites and numbered steps |
+| `wiki/people/` | Person | Anyone referenced across sources more than once |
+| `wiki/decisions/` | Decision | A dated choice worth remembering the reasoning behind |
+| `wiki/reviews/` | Review | A synthesized answer to a past query, promoted because it's reusable |
 
-## Note formats
+Plus two special files:
+- `wiki/index.md` — catalog of every page, grouped by entity type. Update it whenever a page is created or removed.
+- `wiki/log.md` — append-only, newest-first record of every ingest/ask/lint run. Never delete entries; only append.
 
-Two note styles are both in active use. Match the style already used in the folder you're editing; use the frontmatter style for anything new in the numbered folders.
+`dashboard.md` at the vault root is the human entry point and points into `wiki/index.md`.
 
-**Frontmatter style** (current standard — `02-Knowledge/`, `03-Projects/`, `99-System/`, etc.):
+## Page schema
+
+Every wiki page uses this frontmatter, regardless of entity type:
+
 ```markdown
 ---
 title: <Title>
-tags: [tag1, tag2, tag3]
-domain: <domain>
-difficulty: beginner|intermediate|advanced
+type: concept | tool | project | runbook | person | decision | review
+domain: [devops, ai-ml, personal]   # array; a page can span domains
+status: stable | evolving | stub    # what /lint checks
+tags: [tag1, tag2]
+sources: [raw-sources/archive/<file>]  # provenance back to layer 1; [] if none
 created: YYYY-MM-DD
 updated: YYYY-MM-DD
 ---
@@ -50,30 +57,38 @@ updated: YYYY-MM-DD
 # <Title>
 
 ## Summary
-## Concepts
-## Commands / Code
-## Architecture / Flow
-## Use Cases
-## Related Topics
-- [[wikilink-to-related-note]]
-## Tags
-#hashtag #style #tags
+## Details
+## Open questions
+## Related
+- [[wikilink-to-related-page]]
 ```
 
-**Emoji-heading style** (older — `AI-*/` folders): no frontmatter; `#` heading with an emoji, `tags: #a #b #c` as a plain line, sections with emoji bullets (📌, 🔹, 👉), a `Related Notes` section of `[[wikilinks]]`, no closing `## Tags` block.
-
-Regardless of style, notes are expected to be:
-- Self-contained and explicit (avoid "this"/"that" — RAG chunking loses context that pronouns rely on)
+Notes should be:
+- Self-contained and explicit — avoid "this"/"that" (RAG chunking loses the context pronouns rely on)
 - Broken into clear headings with short paragraphs (chunk-friendly)
-- Linked to related notes via `[[wikilink]]`
-- Tagged for retrieval, using structured tags like `#infra/kubernetes`, `#tool/terraform`, `#project/mcp`, `#learning`
+- Linked to related pages via `[[wikilink]]`, including across domains
+- Filed with a descriptive kebab-case filename, e.g. `kubernetes-cluster-fundamentals.md`
 
-File names are descriptive kebab-case with domain context, e.g. `kubernetes-cluster-fundamentals.md`, `aws-alb-opensearch-log-pipeline-runbook.md`.
+`Open questions` is what makes a page revisitable: something a future `/ingest` should try to answer, not a rhetorical gap.
+
+## Operations
+
+Three verbs, invoked on demand — nothing runs unattended yet (see the design plan's Automation path for the intended progression to scheduled ingestion).
+
+- **Ingest** — given a source in `raw-sources/inbox/`: read it, decide which existing `wiki/` pages it touches (often several), create new pages only where none fit, append an entry to `wiki/log.md`, update `wiki/index.md` if pages were added/removed, then move the source to `raw-sources/archive/`.
+- **Ask** — given a question: search `wiki/` (not raw sources) for relevant pages, answer with citations to specific pages by filename, and if the answer is reusable, offer to promote it to `wiki/reviews/`.
+- **Lint** — periodic pass over `wiki/`: flag contradictions between pages, `status: stub` pages that have gone stale, pages with no inbound `[[links]]`, and domains with thin coverage. Report findings; don't silently rewrite pages.
+
+## Migration status
+
+The vault is mid-migration from an older `00`–`99` numbered-folder scheme (plus flat `AI-*` topic folders) into the `wiki/` structure above. Until migration finishes:
+- **New content always goes into `wiki/`**, following the schema above — never add to the old numbered/`AI-*` folders.
+- The old folders (`00-Inbox/`, `01-Foundation/`, `02-Knowledge/`, `03-Projects/`, `04-Runbooks/`, `04-Snippets/`, `05-Logs/`, `06-Resources/`, `AI-*/`) still hold real content not yet carried over. Treat them as read-only reference material, not as places to file new notes.
+- `99-System/` is kept permanently as historical design record (the original bootstrap prompts plus the current [llm-wiki-design-plan.md](99-System/llm-wiki-design-plan.md)) — consult it, don't migrate it into `wiki/`.
+- See the design plan's Migration Plan section for the phase-by-phase carry-over of runbooks, `AI-*` concepts, and projects into `wiki/`.
 
 ## Editorial conventions
 
-- **Runbooks** (`04-Runbooks/`) document real operational procedures (e.g. AWS RDS/PostgreSQL setup, ALB logs → OpenSearch pipeline). They include a Prerequisites section, numbered steps with runnable commands, a Common Errors & Fixes section, and often end with a reusable templated version of the commands (e.g. `{{DB_NAME}}` placeholders). Preserve this shape when adding or editing runbooks.
-- Treat `99-System/ai-obsidian-bootstrap-prompt.md` and `99-System/obsidian-rag-mcp-master-prompt.md` as the design brief for the vault — they record the original intent (RAG/MCP-ready structure) and the exact note template originally specified. If asked to "organize the vault" or restructure notes, consult these first.
-- Do not delete existing information when restructuring notes — prefer merging, re-linking, or moving over deleting (this is an explicit constraint from the bootstrap brief).
-- When promoting an inbox item, follow the flow: rough capture in `00-Inbox/` → durable note in `02-Knowledge/` or `03-Projects/` → reusable commands extracted to `04-Snippets/` → milestone recorded in `05-Logs/`.
-- Runbook SQL/shell examples in this vault sometimes contain example credentials (e.g. `StrongPassword123`) — these are placeholder/template values for local reference notes, not live secrets, but don't add real secrets when editing these files.
+- **Runbooks** carry a Prerequisites section, numbered steps with runnable commands, a Common Errors & Fixes section, and often a reusable templated version of the commands (e.g. `{{DB_NAME}}` placeholders). Preserve this shape.
+- Do not delete existing information when restructuring — prefer merging, re-linking, or moving into `raw-sources/archive/` over deleting.
+- Runbook SQL/shell examples sometimes contain example credentials (e.g. `StrongPassword123`) — these are placeholder/template values, not live secrets, but don't add real secrets when editing these files.
