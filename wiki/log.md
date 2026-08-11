@@ -19,6 +19,10 @@ Append-only record of every `/ingest`, `/ask`, and `/lint` run. Newest entries a
 
 ---
 
+### 2026-08-11 — scope clarification: 99-System/ vs wiki/decisions/
+**Operation:** schema clarification
+**Summary:** Checked Karpathy's gist directly — it defines only three layers (raw-sources, wiki, schema file) and relies on git history for structural change, with no dedicated "system notes" concept. `99-System/` predates this migration and isn't part of the original pattern; kept but scoped narrowly in `CLAUDE.md`: it holds only documents about the vault's own folder structure/schema. Every other kind of decision — including tooling choices like vector DB selection — goes in `wiki/decisions/` so `/ask` and `/lint` can find it. No files moved.
+
 ### 2026-08-11 — migration ingest
 **Operation:** ingest (bulk, Phase 2/3 of [[llm-wiki-design-plan]])
 **Sources:** all 26 real-content files from the old `00-Inbox/`, `01-Foundation/AI/`, `02-Knowledge/`, `03-Projects/`, `04-Runbooks/`, `04-Snippets/`, `05-Logs/`, `06-Resources/`, and `AI-*/` folders, moved unchanged into `raw-sources/archive/` before ingest.

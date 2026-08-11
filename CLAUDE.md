@@ -29,7 +29,7 @@ Every page lives under `wiki/` in exactly one entity folder:
 | `wiki/projects/` | Project | Ongoing work with a start state and a goal; has a `status` field |
 | `wiki/runbooks/` | Runbook | A repeatable operational procedure with prerequisites and numbered steps |
 | `wiki/people/` | Person | Anyone referenced across sources more than once |
-| `wiki/decisions/` | Decision | A dated choice worth remembering the reasoning behind |
+| `wiki/decisions/` | Decision | A dated choice worth remembering the reasoning behind — including decisions about wiki content or tooling (e.g. "chose pgvector over FAISS"). Only decisions about the vault's own folder structure/schema go in `99-System/` instead — see below. |
 | `wiki/reviews/` | Review | A synthesized answer to a past query, promoted because it's reusable |
 
 Plus two special files:
@@ -86,6 +86,8 @@ Migration from the old `00`–`99` numbered-folder scheme (plus flat `AI-*` topi
 - **All content lives in `wiki/`** now, following the schema above.
 - `raw-sources/archive/` holds the original pre-migration files for provenance/citation — treat them as read-only history, not as pages to edit.
 - `99-System/` is kept permanently as historical design record (the original bootstrap prompts plus [llm-wiki-design-plan.md](99-System/llm-wiki-design-plan.md)) — it documents the vault's own design, not domain content, so it stays outside `wiki/`.
+
+Note: Karpathy's original gist defines only three layers — `raw-sources/`, `wiki/`, and the schema file — and relies on git history for tracking structural change, with no dedicated "system notes" area. `99-System/` is this vault's own addition on top of that pattern, kept because it predates this migration. Scope it narrowly: it holds **only** documents about the vault's own folder structure/schema (this file's design rationale). Every other kind of decision — tooling choices, domain content, personal calls — belongs in `wiki/decisions/`, not here, so `/ask` and `/lint` can actually find it.
 
 ## Editorial conventions
 
