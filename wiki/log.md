@@ -19,6 +19,10 @@ Append-only record of every `/ingest`, `/ask`, and `/lint` run. Newest entries a
 
 ---
 
+### 2026-08-11 — Phase 4 deferred
+**Operation:** none (deferred)
+**Summary:** Attempted to start Phase 4 (first `/ingest` against genuinely new material). No script or tooling was needed — confirmed `/ingest` is purely a prompt-driven operation, nothing to build. No real source was available yet, and a synthetic test note was deliberately skipped since it would validate less than waiting for real content. `raw-sources/inbox/` remains empty. Phase 4 stays open — pick it up the next time real material (an article, a note, anything not already in the wiki) is dropped into the inbox.
+
 ### 2026-08-11 — scope clarification: 99-System/ vs wiki/decisions/
 **Operation:** schema clarification
 **Summary:** Checked Karpathy's gist directly — it defines only three layers (raw-sources, wiki, schema file) and relies on git history for structural change, with no dedicated "system notes" concept. `99-System/` predates this migration and isn't part of the original pattern; kept but scoped narrowly in `CLAUDE.md`: it holds only documents about the vault's own folder structure/schema. Every other kind of decision — including tooling choices like vector DB selection — goes in `wiki/decisions/` so `/ask` and `/lint` can find it. No files moved.

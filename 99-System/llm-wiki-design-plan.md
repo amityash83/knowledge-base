@@ -140,8 +140,10 @@ Most existing numbered-folder notes were thin (~45-50 line) templated scaffoldin
 - All now-empty old folders (`00-Inbox/`, `01-Foundation/`, `02-Knowledge/`, `03-Projects/`, `04-Runbooks/`, `04-Snippets/`, `05-Logs/`, `06-Resources/`, `AI-AIOps/`, `AI-Agents/`, `AI-Experiments/`, `AI-MCP/`, `AI-Models/`, `AI-RAG/`) were deleted
 - `99-System/*` kept in place as historical design record, untouched
 
-### Phase 4 — First real ingest against new material — not started
-- Still pending: drop one genuinely new source into `raw-sources/inbox/` and run `/ingest` to prove the operation end-to-end against material that wasn't part of the bulk migration
+### Phase 4 — First real ingest against new material — open, waiting on a real source
+- No script or tooling is needed for this step — `/ingest` is just a prompt: give Claude a source, it reads it and updates `wiki/` pages directly. There's nothing to build.
+- Deliberately not tested with synthetic/placeholder content — the point of this phase is to validate the operation against something real, so a fake test note would prove less than waiting for actual material.
+- Next real source you drop into `raw-sources/inbox/` (an article, a meeting note, anything not already in the wiki) — ask for `/ingest` and this phase closes out.
 - Check the result: does it link into the migrated pages correctly, does `log.md` read clearly, does Obsidian's graph view look sane
 
 ## Automation path
