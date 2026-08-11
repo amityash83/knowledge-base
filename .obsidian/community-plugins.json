@@ -8,5 +8,18 @@
   "calendar",
   "dataview",
   "obsidian-day-planner",
-  "obsidian-git"
+  "obsidian-git",
+  "contribution-graph",
+  "obsidian-banners",
+  "obsidian-charts",
+  "code-styler",
+  "obsidian-custom-attachment-location",
+  "obsidian-excalidraw-plugin",
+  "folder-notes",
+  "obsidian-icon-folder",
+  "obsidian-meta-bind-plugin",
+  "omnisearch",
+  "periodic-notes",
+  "quickadd",
+  "table-editor-obsidian"
 ]
