@@ -4,7 +4,7 @@ type: concept
 domain: [ai-ml, devops]
 status: stable
 tags: [llm-wiki, obsidian, knowledge-graph, agentic-ai]
-sources: [raw-sources/archive/build-llm-wiki-with-obsidian.md]
+sources: [raw-sources/archive/build-llm-wiki-with-obsidian.md, "https://github.com/wanderloots-tutorials/vibe-coding/blob/main/wanderloots-llm-wiki-core-setup-v1.0.0.md"]
 created: 2026-08-11
 updated: 2026-08-11
 ---
@@ -32,15 +32,43 @@ This loop is meant to run repeatedly — daily, or on some automated cadence —
 ### Why git matters here
 Every wiki operation is treated as a git-tracked change, specifically because an agent can make mistakes or corrupt the vault. Git commits act as save points — you can always diff or roll back to before a bad ingest. The wiki log (see [[wiki/log|Wiki Log]] in this vault) is the human-readable complement to that: a record of *what* changed and *why*, so the diff isn't the only way to understand a change.
 
-### One tutorial's implementation choices (for comparison)
-A specific walkthrough of this pattern (source: Wanderloots, "The LLM Wiki: A Shared Memory Layer For AI & Humans") builds it with meaningfully more tooling than a pure prompt-driven approach:
-- A Python script (`wiki_tool.py`) that performs ingest/index/catalog/lint operations deterministically, rather than leaving the agent to reason out each step from scratch every time.
-- Custom local Obsidian-aware skills scoped to the specific vault (e.g. an `llm-wiki-query` skill, an `llm-wiki-ingest` skill), on top of a general Obsidian CLI skill pack.
-- Per-entity-type templates (source, concept, topic, entity, project, log) that the agent fills in, rather than one shared frontmatter schema across all types.
-- An "Obsidian firewall" — a wrapper skill that checks any Obsidian CLI action against an approved-vault allowlist, so an agent operating in one vault can't accidentally write into another.
-- Optional local-model support via Ollama, with a review/draft folder so a human approves a local model's output before it's applied — because local models are noted as more error-prone than cloud models, at least until the schema and skills are well-tuned.
+### One tutorial's implementation, concretely
+Beyond the walkthrough video, the same author publishes a public build spec — a "core setup guide" meant to be handed directly to a coding agent as its build instructions. It's considerably more concrete than the video's narration:
 
-See [[llm-wiki-pattern-vs-script-free-approach]] for how this vault's own choices compare and why.
+**Folder structure:**
+```text
+Raw/Sources/       # captured source material only
+Raw/Files/          # PDFs and other non-text files
+Wiki/Topics/
+Wiki/Concepts/
+Wiki/Entities/
+Wiki/Projects/
+Wiki/Logs/
+Schema/             # the rules layer
+_templates/         # one template per note type
+.agents/skills/     # vault-scoped agent skills
+scripts/            # wiki_tool.py and friends
+```
+
+**What `AGENTS.md` (the schema/contract file) is required to specify:**
+- Treat `Raw/Sources/` as source material only — never overwrite it
+- Write reusable knowledge only under `Wiki/`
+- Keep every compiled note linked back to the Raw source it came from
+- Search `Wiki/catalog.jsonl` before opening raw sources or broad context — i.e., check the index before doing expensive work
+- Run build, lint, and source checks before every commit
+- **Never invent citations**
+
+**Required templates** (`_templates/`): `source-note.md`, `concept-note.md`, `topic-note.md`, `entity-note.md`, `project-note.md`, `log-note.md` — each compiled note is tagged with exactly one of `topic`, `concept`, `entity`, `project`, or `log`.
+
+**`scripts/wiki_tool.py` commands:** `doctor` (health check), `build` (generate `catalog.jsonl` and indexes), `lint` (validate frontmatter and source links), `source-scan` (list raw sources), `source-lint` (validate source coverage), `search-catalog --query "..."` (search compiled notes without opening them), `log --title ... --details ...` (append to the wiki log).
+
+**Build sequence, step by step:** (00) init vault + `.gitignore` → (01) create folder structure → (02) write `AGENTS.md`, schema files, agent skills → (03) create templates with correct frontmatter → (04) build the deterministic tooling (`wiki_tool.py`) → (05) ingest a first source and produce sample wiki notes → (06) run all tools and commit.
+
+**Pre-commit maintenance gate:** run `doctor`, `build`, `lint`, `source-lint`, and an `audit_public.py` check, in that order, before committing.
+
+**Acceptance criteria for "done":** `AGENTS.md` exists with clear rules; the templates directory is complete; `wiki_tool.py` supports every required command; `catalog.jsonl` and `source-manifest.jsonl` exist; at least one raw source is linked to a compiled wiki note; no advanced/bonus folders exist unless explicitly requested.
+
+See [[llm-wiki-pattern-vs-script-free-approach]] for how this vault's own choices compare against this spec, and where it deliberately draws a narrower line (one read-only lint script, no catalog/build layer, no per-vault skill pack).
 
 ## Open questions
 - **Obsidian vault firewall** — this vault only ever operates on one vault, so a multi-vault safety wrapper hasn't been needed; revisit if a second vault is ever added to the same Claude Code setup.

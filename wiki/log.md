@@ -19,6 +19,15 @@ Append-only record of every `/ingest`, `/ask`, and `/lint` run. Newest entries a
 
 ---
 
+### 2026-08-11 — second ingest + first script (wiki_lint.py added)
+**Operation:** ingest (second source) + tooling decision
+**Source:** the author's public build spec for the same tutorial — https://github.com/wanderloots-tutorials/vibe-coding/blob/main/wanderloots-llm-wiki-core-setup-v1.0.0.md (fetched directly; publicly readable, unlike the paywalled Patreon post also linked, which returned 403 and was not ingested).
+**Pages updated:** [[llm-wiki-pattern]] — replaced the vague "tutorial implementation" summary with the spec's concrete detail (exact folder names, required `AGENTS.md` rules, full `wiki_tool.py` command list, build sequence, acceptance criteria). [[llm-wiki-pattern-vs-script-free-approach]] — updated to reflect the actual line drawn (see below), both pages' `sources` extended to cite the new source.
+**Tooling decision:** added `scripts/wiki_lint.py` — a read-only, stdlib-only script validating frontmatter (`type`/`domain`/`status`/required fields/dates), `sources` path existence (local paths only; URLs skipped), and `[[wikilink]]` resolution across the whole vault (not just `wiki/`). This is the one exception to the vault's script-free approach: mechanical checks with no judgment component, previously done by Claude eyeballing frontmatter by hand.
+**Bug the linter caught on its first real run:** 3 project pages used `status: active`, not a value the schema (`stable|evolving|stub`) allowed at the time. Fixed by extending `CLAUDE.md`'s schema: `type: project` pages now use their own lifecycle (`active|paused|done`), separate from content-maturity status used by every other type. `scripts/wiki_lint.py` updated to validate against the correct set per type.
+**Script bugs found and fixed during testing:** initial version flagged URLs in `sources` as broken local paths, and flagged literal `[[wikilinks]]` mentioned inside inline code / fenced blocks as dangling links. Both fixed and verified against a deliberately-broken fixture file before trusting the script's real-wiki output.
+**Verification:** `python3 scripts/wiki_lint.py` — 20 pages checked, 0 problems, both before and after this ingest's edits.
+
 ### 2026-08-11 — first real ingest (Phase 4 complete)
 **Operation:** ingest
 **Source:** `raw-sources/inbox/build-llm-wiki-with-obsidian.md` — full transcript of "The LLM Wiki: A Shared Memory Layer For AI & Humans" (Wanderloots, YouTube), manually captured by the user since automated transcript fetching isn't reliable from this environment (YouTube captions are JS-rendered / signed URLs expire immediately — confirmed via WebFetch and curl before falling back to manual capture).

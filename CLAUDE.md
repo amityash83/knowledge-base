@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this repository is
 
-This is **not a software project** — it's an Obsidian vault (personal Markdown knowledge base), version-controlled with git. There is no build, lint, or test tooling. "Working in this repo" means reading, writing, and cross-linking Markdown notes according to the schema below, not writing or executing code.
+This is **not a software project** — it's an Obsidian vault (personal Markdown knowledge base), version-controlled with git. "Working in this repo" is mostly reading, writing, and cross-linking Markdown notes according to the schema below, not writing or executing code. The one exception is `scripts/wiki_lint.py` — a small, dependency-free, read-only validator for mechanical frontmatter/link mistakes (see Tooling below). Everything that requires judgment — deciding what a source means, which pages it touches, how a page should be worded — stays a Claude Code operation, never scripted.
 
 The vault implements Andrej Karpathy's ["LLM Wiki" pattern](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f): instead of a RAG system that re-retrieves from raw documents on every query, Claude maintains a **persistent, evolving wiki** of cross-linked pages that accumulate and improve every time a new source is ingested. Design rationale and migration status live in [99-System/llm-wiki-design-plan.md](99-System/llm-wiki-design-plan.md) — read it before making structural changes.
 
@@ -47,7 +47,9 @@ Every wiki page uses this frontmatter, regardless of entity type:
 title: <Title>
 type: concept | tool | project | runbook | person | decision | review
 domain: [devops, ai-ml, personal]   # array; a page can span domains
-status: stable | evolving | stub    # what /lint checks
+status: stable | evolving | stub    # content maturity — for every type except project
+                                     # projects use their own lifecycle instead:
+                                     # status: active | paused | done
 tags: [tag1, tag2]
 sources: [raw-sources/archive/<file>]  # provenance back to layer 1; [] if none
 created: YYYY-MM-DD
@@ -77,7 +79,13 @@ Three verbs, invoked on demand — nothing runs unattended yet (see the design p
 
 - **Ingest** — given a source in `raw-sources/inbox/`: read it, decide which existing `wiki/` pages it touches (often several), create new pages only where none fit, append an entry to `wiki/log.md`, update `wiki/index.md` if pages were added/removed, then move the source to `raw-sources/archive/`.
 - **Ask** — given a question: search `wiki/` (not raw sources) for relevant pages, answer with citations to specific pages by filename, and if the answer is reusable, offer to promote it to `wiki/reviews/`.
-- **Lint** — periodic pass over `wiki/`: flag contradictions between pages, `status: stub` pages that have gone stale, pages with no inbound `[[links]]`, and domains with thin coverage. Report findings; don't silently rewrite pages.
+- **Lint** — periodic pass over `wiki/`: flag contradictions between pages, `status: stub` pages that have gone stale, pages with no inbound `[[links]]`, and domains with thin coverage. Report findings; don't silently rewrite pages. Run `scripts/wiki_lint.py` first (see Tooling) to clear mechanical issues before doing this semantic pass — no point reasoning about contradictions on a page with a typo'd `type:` field.
+
+## Tooling
+
+`scripts/wiki_lint.py` — a read-only, dependency-free (stdlib-only) script that checks every `wiki/*.md` page for mechanical mistakes: invalid `type`/`domain`/`status` values, missing required frontmatter fields, malformed dates, `sources` paths that don't exist on disk, and `[[wikilinks]]` that don't resolve to any page. Run it with `python3 scripts/wiki_lint.py` (add `--json` for machine-readable output). It never edits a file — only reports. This is deliberately the *only* script in the vault: it replaces token spent on Claude eyeballing frontmatter by hand, but the actual judgment calls (what a source means, which pages it touches, how to word a page) stay Claude Code operations. See [[llm-wiki-pattern-vs-script-free-approach]] for the fuller reasoning on where that line is drawn, and revisit it if the wiki grows enough that more automation (e.g. auto-generating `wiki/index.md`) starts paying for itself.
+
+Run it after any `/ingest` and before any `/lint` pass.
 
 ## Migration status
 
