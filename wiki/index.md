@@ -26,6 +26,7 @@ See [[llm-wiki-design-plan]] for the schema this index follows.
 - [[kubernetes-cluster-fundamentals]] — control plane, worker nodes, request flow
 - [[kubernetes-service-networking]] — Services, Ingress, traffic paths
 - [[terraform-workflow]] — the plan/apply lifecycle and why it's structured that way
+- [[llm-wiki-pattern]] — the 3-layer sources/wiki/schema pattern and its ingest/maintain/query loop, this vault's own model
 
 ## Tools
 - [[kubectl]] — command reference
@@ -44,7 +45,7 @@ See [[llm-wiki-design-plan]] for the schema this index follows.
 _None yet._
 
 ## Decisions
-_None yet._
+- [[llm-wiki-pattern-vs-script-free-approach]] — why this vault stays script-free vs. a more heavily tooled comparable implementation
 
 ## Reviews
 - [[ai-learning-free-courses]] — curated free AI course list

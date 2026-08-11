@@ -140,11 +140,11 @@ Most existing numbered-folder notes were thin (~45-50 line) templated scaffoldin
 - All now-empty old folders (`00-Inbox/`, `01-Foundation/`, `02-Knowledge/`, `03-Projects/`, `04-Runbooks/`, `04-Snippets/`, `05-Logs/`, `06-Resources/`, `AI-AIOps/`, `AI-Agents/`, `AI-Experiments/`, `AI-MCP/`, `AI-Models/`, `AI-RAG/`) were deleted
 - `99-System/*` kept in place as historical design record, untouched
 
-### Phase 4 — First real ingest against new material — open, waiting on a real source
-- No script or tooling is needed for this step — `/ingest` is just a prompt: give Claude a source, it reads it and updates `wiki/` pages directly. There's nothing to build.
-- Deliberately not tested with synthetic/placeholder content — the point of this phase is to validate the operation against something real, so a fake test note would prove less than waiting for actual material.
-- Next real source you drop into `raw-sources/inbox/` (an article, a meeting note, anything not already in the wiki) — ask for `/ingest` and this phase closes out.
-- Check the result: does it link into the migrated pages correctly, does `log.md` read clearly, does Obsidian's graph view look sane
+### Phase 4 — First real ingest against new material ✅
+- Confirmed `/ingest` needs no script or tooling — it's purely a prompt: give Claude a source, it reads it and updates `wiki/` pages directly.
+- Real source used: a YouTube transcript (manually captured — see the automated-fetch attempts and why they failed, noted in `wiki/log.md`'s "first real ingest" entry).
+- Result: created one new concept page ([[llm-wiki-pattern]]) and one new decision page ([[llm-wiki-pattern-vs-script-free-approach]]), cross-linked into 4 existing pages, no stub pages created for not-yet-relevant features (captured as Open questions instead). `wiki/log.md` entry reads clearly; graph view gains two new connected nodes rather than an isolated cluster.
+- This closes out the core `/ingest` → `/ask` → `/lint` loop validation; the loop is now proven against both a bulk migration and a single real-world source.
 
 ## Automation path
 
@@ -168,3 +168,5 @@ Deliberately left open — worth answering when actually building, not now.
 - [[ai-obsidian-bootstrap-prompt]]
 - [[obsidian-rag-mcp-master-prompt]]
 - [[dashboard]]
+- [[llm-wiki-pattern]] — a comparable tutorial implementation of this same pattern, ingested as Phase 4's first real source
+- [[llm-wiki-pattern-vs-script-free-approach]] — why this vault's implementation stayed script-free by comparison

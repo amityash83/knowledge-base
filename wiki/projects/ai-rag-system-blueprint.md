@@ -39,3 +39,4 @@ A retrieval-augmented generation system built on this vault's own structured con
 - [[retrieval-augmented-generation]]
 - [[embeddings-and-vector-databases]]
 - [[devops-mcp-control-plane]]
+- [[llm-wiki-pattern]]

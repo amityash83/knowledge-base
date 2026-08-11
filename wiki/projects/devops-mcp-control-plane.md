@@ -41,3 +41,4 @@ git checkout -b codex/mcp-control-plane
 - [[ai-agents]]
 - [[retrieval-augmented-generation]]
 - [[ai-rag-system-blueprint]]
+- [[llm-wiki-pattern]]

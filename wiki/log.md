@@ -19,6 +19,16 @@ Append-only record of every `/ingest`, `/ask`, and `/lint` run. Newest entries a
 
 ---
 
+### 2026-08-11 — first real ingest (Phase 4 complete)
+**Operation:** ingest
+**Source:** `raw-sources/inbox/build-llm-wiki-with-obsidian.md` — full transcript of "The LLM Wiki: A Shared Memory Layer For AI & Humans" (Wanderloots, YouTube), manually captured by the user since automated transcript fetching isn't reliable from this environment (YouTube captions are JS-rendered / signed URLs expire immediately — confirmed via WebFetch and curl before falling back to manual capture).
+**Pages created:**
+- Concept: [[llm-wiki-pattern]] — the 3-layer sources/wiki/schema pattern, its ingest/maintain/query loop, and why git matters for it
+- Decision: [[llm-wiki-pattern-vs-script-free-approach]] — recorded why this vault stays script-free vs. the source's more heavily tooled (Python script, custom Obsidian skills, vault firewall) implementation of the same pattern
+**Pages updated (cross-linked):** [[retrieval-augmented-generation]], [[devops-mcp-control-plane]], [[ai-rag-system-blueprint]], [[llm-wiki-design-plan]]
+**Not created:** No stub pages for the source's advanced features not yet relevant to this vault (Obsidian multi-vault firewall, local model via Ollama, PDF ingestion, "molecular zettelkasting") — captured instead as Open questions on [[llm-wiki-pattern]] so they're findable later without speculative empty pages.
+**Summary:** First ingest run against genuinely new material (not part of the bulk migration), closing out Phase 4 of [[llm-wiki-design-plan]]. Source moved to `raw-sources/archive/build-llm-wiki-with-obsidian.md`.
+
 ### 2026-08-11 — Phase 4 deferred
 **Operation:** none (deferred)
 **Summary:** Attempted to start Phase 4 (first `/ingest` against genuinely new material). No script or tooling was needed — confirmed `/ingest` is purely a prompt-driven operation, nothing to build. No real source was available yet, and a synthetic test note was deliberately skipped since it would validate less than waiting for real content. `raw-sources/inbox/` remains empty. Phase 4 stays open — pick it up the next time real material (an article, a note, anything not already in the wiki) is dropped into the inbox.

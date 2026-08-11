@@ -63,7 +63,7 @@ answer = generate(query, context=results)
 - **Metadata filtering** — filtering retrieval by domain, difficulty, project, or recency improves precision beyond similarity alone.
 
 ### This vault's own RAG use case
-This vault *is* a RAG-style system in practice: Obsidian notes are the knowledge base, an embedding step would index them, a vector DB would store them, and an LLM (Claude Code) generates grounded answers — orchestrated through the `/ask` operation defined in [CLAUDE.md](../../CLAUDE.md). See [[ai-rag-system-blueprint]] for the project that formalizes this.
+This vault *is* a RAG-style system in practice: Obsidian notes are the knowledge base, an embedding step would index them, a vector DB would store them, and an LLM (Claude Code) generates grounded answers — orchestrated through the `/ask` operation defined in [CLAUDE.md](../../CLAUDE.md). See [[ai-rag-system-blueprint]] for the project that formalizes this, and [[llm-wiki-pattern]] for the broader compiled-wiki pattern this vault follows instead of pure query-time RAG.
 
 ## Open questions
 - No chunking strategy, embedding model, or vector DB has actually been chosen/implemented yet for this vault — these were listed as future expansion in the original sources (LangChain, LlamaIndex, hybrid search) but nothing was decided.
@@ -74,3 +74,4 @@ This vault *is* a RAG-style system in practice: Obsidian notes are the knowledge
 - [[mcp-architecture]]
 - [[ai-rag-system-blueprint]]
 - [[devops-mcp-control-plane]]
+- [[llm-wiki-pattern]]
